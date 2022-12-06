@@ -1,26 +1,110 @@
 <!doctype html>
 <html>
 <head>
+    <style>
+        body {
+        padding: 10px;
+        }
+        header {
+        text-align: center;
+        border: 3px solid;
+        background-color: orange;
+        color: black;
+        }
+        #captionArea {
+        margin-top: 30px;
+        text-align: center;
+        }
+        #captionArea {
+        margin-top: 30px;
+        text-align: center;
+        }
+        #guessArea {
+        margin-top: 20px;
+        font-size: 15pt;
+        text-align: center;
+        }
+        #result {
+        font-size: 14px;
+        font-weight: bold;
+        color: blue;
+        text-align: center;
+        }
+        
+        .right{
+        text-align: right;
+        }
+        </style>
 <title>Game for Guessing Number</title>
+<link rel="stylesheet"
+href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+integrity="sha384-
+Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
+crossorigin="anonymous">
+    <script>
+        var guess; // storing the guessing number
+        var MAXATTEMPT = 10; // maximum number for attempting
+        var min = 1;
+        var max = 100;
+     var attemptCount = 0; // counting for number of attempts
+</script>
+</head>
+<body>
+   
+<header>
+<h1>Game for Guessing Number</h1>
+</header>
+<div id="captionArea">
+    <h3>Enter a number between
+    
+     <span id="minArea"></span>
+     and
+     <span id="maxArea"></span>
+    </h3>
+    </div>
+    <div id="guessArea">
+        <form>
+            <p>
+            <input type="number" id="guessNumber" class="right" style="width: 100px">
+            </p>
+            <div id="buttonArea1">
+            <button type="button" class="btn btn-danger btn-sm" id="stopBtn">Leave</button>
+            <button type="button" class="btn btn-secondary btn-sm" id="repeatBtn">
+            Next Game</button>
+            </div>
+            <div id="buttonArea2">
+            <button type="button" class="btn btn-danger btn-sm" id="giveUpBtn">Give Up</button>
+            <button type="button" class="btn btn-primary btn-sm" id="guessBtn">Guess</button>
+            </div>
+            </form>
+            
+    </div>
+    <div id="result">
+    </div>
+</body>
+<script
+ src="https://code.jquery.com/jquery-3.4.1.min.js"
+ integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+ crossorigin="anonymous">
+</script>
 <script>
-var guess; // storing the guessing number
-var MAXATTEMPT = 10; // maximum number for attempting
-var min = 1;
-var max = 100;
 function updateRangeValue() {
-document.getElementById("minArea").innerHTML = min;
-document.getElementById("maxArea").innerHTML = max;}
-function generateNumber(){
-secretNumber = Math.round ( Math.random() * 99, 0 ) + 1;
-console.log("Secret Number " + secretNumber);} // log generated number
+$("#minArea").html(min);
+$("#maxArea").html(max);
+$("#guessNumber").attr({
+"max" : max,
+"min" : min
+});
+}
+    function generateNumber(){
+    secretNumber = Math.round ( Math.random() * 99, 0 ) + 1;
+    console.log("Secret Number " + secretNumber);} // log generated number
 function checking() {
 var message;
 // Obtain the guess number
-guess = parseInt( document.getElementById("guessNumber").value );
-var attemptCount = 0; // counting for number of attempts
+guess = parseInt( $("#guessNumber").val() );
 attemptCount++;
-
-// Validation and matching
+// Validation and Matching
 if ( isNaN(guess) || guess == null ) {
 message = "Invalid Number !";
 }
@@ -40,37 +124,76 @@ message = "Not Match! The number is too small.";
 }
 message += "<br />You have attempted " + attemptCount + " time(s).";
 var exceed = checkMaximum();
+7
 if (exceed == true) {
-message += "<br />Maximum Attempts reached! ";
+message += "<br />Maximum Attemtps reached! ";
 message += "The secret number is " + secretNumber + ".";
 }
-document.getElementById("result").innerHTML = message;
+$("#result").html(message);
 if (guess != secretNumber) {
 updateRangeValue();
 }
+
+if ( guess == secretNumber || exceed == true ) {
+askContinue();
 }
+
+}
+   
+$(document).ready( function() {
+generateNumber();
+updateRangeValue();
+});
+$("#guessBtn").click( function() {
+checking();
+});
+
 function checkMaximum () {
-return ( attemptCount >= MAXATTEMPT ) ? true : false;
+    return ( attemptCount >= MAXATTEMPT ) ? true : false;
+    }
+
+$("#giveUpBtn").click( function() {
+var confirm = window.confirm("Are you sure you want to quit this round?");
+if (confirm == true) {
+message = "<br />You have attempted " + attemptCount + " time(s).";
+message += "<br />The secret number is " + secretNumber + ".";
+$("#result").html(message);
 }
-</script>
-</head>
-<body onLoad="generateNumber(); updateRangeValue();">
-<header>
-<h1>Game for Guessing Number</h1>
-</header>
-<div id="captionArea">
-Enter a number between
- <span id="minArea"></span>
- and
- <span id="maxArea"></span>
-</div>
-<div>
-<form>
-<input type="number" id="guessNumber">
-<input type="button" id="guessBtn" onClick="checking()" value="Guess" />
-</form>
-</div>
-<div id="result">
-</div>
-</body>
+askContinue();
+
+});
+
+$("#repeatBtn").click( function() {
+$("#guessNumber").val("");
+$("#result").html("");
+endGame( false );
+});
+$("#stopBtn").click( function() {
+var confirm = window.confirm("Are you sure to leave?");
+if (confirm == true) {
+endGame( true );
+}
+});
+function askContinue() {
+$("#buttonArea1").show();
+$("#buttonArea2").hide();
+}
+
+function endGame( opt ) {
+/* To stop the game */
+if ( opt == true) {
+window.close();
+}
+else { /* To continue another round */
+$("#buttonArea1").hide();
+$("#buttonArea2").show();
+generateNumber();
+updateRangeValue();
+}
+}
+$(document).ready( function() {
+endGame( false );
+});
+
+    </script>
 </html>
