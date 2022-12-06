@@ -1,0 +1,76 @@
+<!doctype html>
+<html>
+<head>
+<title>Game for Guessing Number</title>
+<script>
+var guess; // storing the guessing number
+var MAXATTEMPT = 10; // maximum number for attempting
+var min = 1;
+var max = 100;
+function updateRangeValue() {
+document.getElementById("minArea").innerHTML = min;
+document.getElementById("maxArea").innerHTML = max;}
+function generateNumber(){
+secretNumber = Math.round ( Math.random() * 99, 0 ) + 1;
+console.log("Secret Number " + secretNumber);} // log generated number
+function checking() {
+var message;
+// Obtain the guess number
+guess = parseInt( document.getElementById("guessNumber").value );
+var attemptCount = 0; // counting for number of attempts
+attemptCount++;
+
+// Validation and matching
+if ( isNaN(guess) || guess == null ) {
+message = "Invalid Number !";
+}
+else if (guess > max || guess < min) {
+message = "Not within the range !";
+}
+else if (guess == secretNumber) {
+message = "Extra Match! Congratulation. ";
+}
+else if (guess > secretNumber) {
+max = guess - 1;
+message = "Not Match! The number is too large.";
+}
+else if (guess < secretNumber) {
+min = guess + 1;
+message = "Not Match! The number is too small.";
+}
+message += "<br />You have attempted " + attemptCount + " time(s).";
+var exceed = checkMaximum();
+if (exceed == true) {
+message += "<br />Maximum Attempts reached! ";
+message += "The secret number is " + secretNumber + ".";
+}
+document.getElementById("result").innerHTML = message;
+if (guess != secretNumber) {
+updateRangeValue();
+}
+}
+function checkMaximum () {
+return ( attemptCount >= MAXATTEMPT ) ? true : false;
+}
+</script>
+</head>
+<body onLoad="generateNumber(); updateRangeValue();">
+<header>
+<h1>Game for Guessing Number</h1>
+</header>
+<div id="captionArea">
+Enter a number between
+ <span id="minArea"></span>
+ and
+ <span id="maxArea"></span>
+</div>
+<div>
+<form>
+<input type="number" id="guessNumber">
+<input type="button" id="guessBtn" onClick="checking()" value="Guess" />
+</form>
+</div>
+<div id="result">
+</div>
+</body>
+</html>
